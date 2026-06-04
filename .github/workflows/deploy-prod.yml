@@ -1,0 +1,160 @@
+name: Build And Deploy Prod Release
+
+concurrency:
+  group: deploy-prod-release
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/deploy-prod.yml"
+      - "apps/web/**"
+      - "apps/server-java/**"
+      - "apps/interview-live-python/**"
+      - "infra/**"
+      - "scripts/deploy/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Normalize image variables
+        id: vars
+        run: |
+          owner="$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')"
+          echo "namespace=$owner" >> "$GITHUB_OUTPUT"
+          echo "image_tag=${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push web image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./apps/web
+          file: ./apps/web/Dockerfile
+          push: true
+          build-args: |
+            VITE_API_BASE_URL=/api/v1
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.title=bishe-web
+          tags: |
+            ghcr.io/${{ steps.vars.outputs.namespace }}/bishe-web:${{ steps.vars.outputs.image_tag }}
+            ghcr.io/${{ steps.vars.outputs.namespace }}/bishe-web:latest
+          cache-from: type=gha,scope=bishe-web-prod
+          cache-to: type=gha,mode=max,scope=bishe-web-prod
+
+      - name: Build and push server image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./apps/server-java
+          file: ./apps/server-java/Dockerfile
+          push: true
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.title=bishe-server
+          tags: |
+            ghcr.io/${{ steps.vars.outputs.namespace }}/bishe-server:${{ steps.vars.outputs.image_tag }}
+            ghcr.io/${{ steps.vars.outputs.namespace }}/bishe-server:latest
+          cache-from: type=gha,scope=bishe-server-prod
+          cache-to: type=gha,mode=max,scope=bishe-server-prod
+
+      - name: Build and push interview live image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./apps/interview-live-python
+          file: ./apps/interview-live-python/Dockerfile
+          push: true
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.title=bishe-interview-live
+          tags: |
+            ghcr.io/${{ steps.vars.outputs.namespace }}/bishe-interview-live:${{ steps.vars.outputs.image_tag }}
+            ghcr.io/${{ steps.vars.outputs.namespace }}/bishe-interview-live:latest
+          cache-from: type=gha,scope=bishe-interview-live-prod
+          cache-to: type=gha,mode=max,scope=bishe-interview-live-prod
+
+      - name: Load SSH key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.PROD_SERVER_SSH_KEY }}
+
+      - name: Add server to known_hosts
+        env:
+          PROD_SERVER_HOST: ${{ secrets.PROD_SERVER_HOST }}
+          PROD_SERVER_PORT: ${{ secrets.PROD_SERVER_PORT }}
+        run: |
+          mkdir -p ~/.ssh
+          port="${PROD_SERVER_PORT:-22}"
+          ssh-keyscan -p "$port" -H "$PROD_SERVER_HOST" >> ~/.ssh/known_hosts
+
+      - name: Deploy release on production server
+        env:
+          PROD_SERVER_HOST: ${{ secrets.PROD_SERVER_HOST }}
+          PROD_SERVER_USER: ${{ secrets.PROD_SERVER_USER }}
+          PROD_SERVER_PORT: ${{ secrets.PROD_SERVER_PORT }}
+          PROD_DEPLOY_PATH: ${{ secrets.PROD_DEPLOY_PATH }}
+          GHCR_READ_USERNAME: ${{ secrets.GHCR_READ_USERNAME }}
+          GHCR_READ_TOKEN: ${{ secrets.GHCR_READ_TOKEN }}
+          IMAGE_NAMESPACE: ${{ steps.vars.outputs.namespace }}
+          IMAGE_TAG: ${{ steps.vars.outputs.image_tag }}
+        run: |
+          port="${PROD_SERVER_PORT:-22}"
+          deploy_path="${PROD_DEPLOY_PATH:-/opt/bishe}"
+          ssh -p "$port" "$PROD_SERVER_USER@$PROD_SERVER_HOST" \
+            "export DEPLOY_ROOT='$deploy_path' \
+                    DEPLOY_BRANCH='${GITHUB_REF_NAME}' \
+                    GHCR_USERNAME='${GHCR_READ_USERNAME}' \
+                    GHCR_TOKEN='${GHCR_READ_TOKEN}' \
+                    GHCR_NAMESPACE='${IMAGE_NAMESPACE}' \
+                    APP_IMAGE_TAG='${IMAGE_TAG}' && \
+             bash '$deploy_path/scripts/deploy/bootstrap_infra_prod.sh' && \
+             bash '$deploy_path/scripts/deploy/deploy_app_prod.sh'"
+
+      - name: Publish deployment summary
+        env:
+          IMAGE_NAMESPACE: ${{ steps.vars.outputs.namespace }}
+          IMAGE_TAG: ${{ steps.vars.outputs.image_tag }}
+        run: |
+          {
+            echo "## Deploy Result"
+            echo
+            echo "- Web image: \`ghcr.io/${IMAGE_NAMESPACE}/bishe-web:${IMAGE_TAG}\`"
+            echo "- Server image: \`ghcr.io/${IMAGE_NAMESPACE}/bishe-server:${IMAGE_TAG}\`"
+            echo "- Live bridge image: \`ghcr.io/${IMAGE_NAMESPACE}/bishe-interview-live:${IMAGE_TAG}\`"
+            echo
+            echo "## Workflow Actions"
+            echo
+            echo "GitHub Actions 当前已完成：构建并推送镜像、SSH 到服务器、启动基础设施、拉取应用镜像并自动启动应用层容器（含 Python Live bridge）。"
+            echo
+            echo "1. 若是首次建站或需要重建业务/演示数据，仍需手工恢复 PostgreSQL dump："
+            echo "   \`bash scripts/db/restore_prod_db_from_dump.sh --dump-file /path/to/your_dump.sql.gz --recreate-db --yes\`"
+            echo "2. 若要启用 Live 实时语音测试模式，请确认服务器 \`infra/docker/.env.prod\` 已配置 \`GEMINI_API_KEY\`。"
+            echo "3. 如需回滚，可在服务器调整 \`infra/docker/.env.prod\` 中的 \`APP_IMAGE_TAG\` 后重新执行："
+            echo "   \`bash scripts/deploy/deploy_app_prod.sh --start-only\`"
+            echo "当前准备好的镜像 tag 已写入服务器的 \`infra/docker/.env.prod\`：\`${IMAGE_TAG}\`。"
+          } >> "$GITHUB_STEP_SUMMARY"

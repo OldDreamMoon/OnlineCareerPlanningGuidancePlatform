@@ -1,0 +1,89 @@
+spring:
+  config:
+    activate:
+      on-profile: test-postgres
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-init-sql: SET TIME ZONE 'UTC'
+  flyway:
+    enabled: true
+    locations: classpath:db/migration-pg
+  sql:
+    init:
+      mode: never
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+logging:
+  level:
+    root: WARN
+
+auth:
+  jwt:
+    secret: test-auth-secret-key-with-at-least-32-chars
+    access-expire-minutes: 120
+    refresh-expire-days: 7
+  captcha:
+    geetest:
+      enabled: false
+  email:
+    resend-api-key: ""
+    resend-from-email: ""
+  admin:
+    email: admin@test.local
+    password: Admin123456!
+    display-name: 测试管理员
+
+ai:
+  gateway:
+    mode: MOCK
+    logging:
+      debug-enabled: false
+      ai-request-log-enabled: false
+
+payment:
+  mode: MOCK
+  unpaid-timeout-minutes: 30
+  sandbox:
+    pay-base-url: http://localhost:8080/sandbox/pay
+    gateway-url: ""
+    app-id: ""
+    app-private-key: ""
+    app-private-key-path: ""
+    verify-enabled: false
+    alipay-public-key: ""
+    alipay-public-key-path: ""
+    sign-type: RSA2
+    notify-url: ""
+    return-url: ""
+    charset: utf-8
+    subject-prefix: 职业规划咨询
+    timeout-express: 30m
+    product-code: FAST_INSTANT_TRADE_PAY
+
+consult:
+  mentor-reply-timeout-hours: 24
+  mentor-reply-reclaim-fixed-delay-ms: 60000
+
+storage:
+  minio:
+    enabled: false
+
+notification:
+  app-base-url: http://localhost:5173
+  dispatch:
+    batch-size: 4
+    lease-ms: 5000
+    poll-interval-ms: 500
+  websocket:
+    ticket-ttl-seconds: 60
+  email:
+    resend-api-key: ""
+    resend-from-email: ""
+    resend-api-url: https://api.resend.com/emails

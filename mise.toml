@@ -1,0 +1,5 @@
+[tools]
+java = "temurin-21"
+node = "lts"
+python = "3.12"
+maven = "latest"

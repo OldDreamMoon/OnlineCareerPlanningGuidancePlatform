@@ -1,0 +1,26 @@
+-- 将 AI 网关收口为固定业务场景维护模型：
+-- 1) 只保留当前真实落地场景的正式路由编码
+-- 2) 只保留这些场景对应的正式模板家族
+-- 3) 清理早期联调阶段遗留的默认 / fallback / 旧模板数据
+
+DELETE FROM ai_model_routes
+WHERE task_type IN ('RESUME', 'COMMUNITY_REPLY', 'ICEBREAK', 'INTERVIEW_TEXT', 'INTERVIEW_SUMMARY', 'STT', 'TTS')
+  AND route_code NOT IN (
+      'SYSTEM_RESUME_OPTIMIZE',
+      'SYSTEM_COMMUNITY_PRE_ANSWER',
+      'SYSTEM_MENTOR_PREP_SHEET',
+      'SYSTEM_ICEBREAK_MESSAGE',
+      'SYSTEM_INTERVIEW_OPENING',
+      'SYSTEM_INTERVIEW_REPLY',
+      'SYSTEM_INTERVIEW_ANSWER_HELPER',
+      'SYSTEM_INTERVIEW_SUMMARY',
+      'SYSTEM_INTERVIEW_VOICE_TRANSCRIBE',
+      'SYSTEM_INTERVIEW_TTS'
+  );
+
+DELETE FROM prompt_templates
+WHERE (task_type = 'RESUME' AND template_name NOT IN ('RESUME_OPTIMIZE_CORE'))
+   OR (task_type = 'COMMUNITY_REPLY' AND template_name NOT IN ('COMMUNITY_PRE_ANSWER_CORE', 'MENTOR_PREP_SHEET_CORE'))
+   OR (task_type = 'ICEBREAK' AND template_name NOT IN ('ICEBREAK_MESSAGE_CORE'))
+   OR (task_type = 'INTERVIEW_TEXT' AND template_name NOT IN ('INTERVIEW_OPENING_CORE', 'INTERVIEW_REPLY_CORE', 'INTERVIEW_ANSWER_HELPER_CORE'))
+   OR (task_type = 'INTERVIEW_SUMMARY' AND template_name NOT IN ('INTERVIEW_SUMMARY_CORE'));

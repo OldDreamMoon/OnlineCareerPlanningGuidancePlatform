@@ -1,0 +1,44 @@
+{
+	email {$APP_TLS_EMAIL}
+}
+
+{$APP_DOMAIN} {
+	encode zstd gzip
+
+	@frontendEntry {
+		not path /api/* /ws/notifications* /ai/interview/live* /assets/* /favicon.ico /robots.txt /vite.svg
+	}
+	basic_auth @frontendEntry {
+		bishe $2a$14$XV9A8Vb7YCS/N0tGLjjcSuaZOo2U.8NuCnMhOQoZ0YVEoIAE4Vc2G
+	}
+
+	header {
+		X-Content-Type-Options nosniff
+		X-Frame-Options SAMEORIGIN
+		Referrer-Policy strict-origin-when-cross-origin
+	}
+
+	@interviewLive path /ai/interview/live*
+	handle @interviewLive {
+		reverse_proxy interview-live:8765
+	}
+
+	@notificationsWs path /ws/notifications*
+	handle @notificationsWs {
+		reverse_proxy server:8080
+	}
+
+	@api path /api/*
+	handle @api {
+		reverse_proxy server:8080
+	}
+
+	handle {
+		reverse_proxy web:80
+	}
+
+	log {
+		output stdout
+		format console
+	}
+}

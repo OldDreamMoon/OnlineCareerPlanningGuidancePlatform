@@ -1,0 +1,45 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
+@theme {
+  --color-surface: #f5f7f9;
+  --color-on-surface: #2c2f31;
+  --color-on-surface-variant: #595c5e;
+  --color-primary: #4647d3;
+  --color-primary-dim: #3939c7;
+  --color-primary-container: #9396ff;
+  --color-on-primary-container: #0a0081;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #eef1f3;
+  --color-surface-container-high: #dfe3e6;
+  --color-outline: #747779;
+  --color-outline-variant: #abadaf;
+  --color-secondary: #006947;
+  --color-secondary-container: #69f6b8;
+  --color-tertiary: #815100;
+  --color-tertiary-container: #f8a010;
+  --color-on-tertiary-container: #4a2c00;
+  --color-error: #b41340;
+  --color-error-container: #f74b6d;
+  --color-on-error-container: #510017;
+
+  --font-headline: 'Manrope', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-label: 'Inter', sans-serif;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
+}
+
+h1, h2, h3 {
+  font-family: var(--font-headline);
+}

@@ -1,0 +1,8 @@
+.env
+.env.*
+target
+KEY
+dev.log
+*.log
+examples
+.DS_Store

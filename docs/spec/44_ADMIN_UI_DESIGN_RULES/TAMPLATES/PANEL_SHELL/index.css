@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #4647d3;
+  --color-primary-dim: #3939c7;
+  --color-primary-container: #9396ff;
+  --color-on-primary-container: #0a0081;
+  --color-secondary: #006947;
+  --color-secondary-dim: #005c3d;
+  --color-secondary-container: #69f6b8;
+  --color-on-secondary-container: #005a3c;
+  --color-tertiary: #815100;
+  --color-tertiary-dim: #714600;
+  --color-tertiary-container: #f8a010;
+  --color-on-tertiary-container: #4a2c00;
+  
+  --color-surface: #f5f7f9;
+  --color-surface-dim: #d0d5d8;
+  --color-surface-bright: #f5f7f9;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #eef1f3;
+  --color-surface-container: #e5e9eb;
+  --color-surface-container-high: #dfe3e6;
+  --color-surface-container-highest: #d9dde0;
+  
+  --color-on-surface: #2c2f31;
+  --color-on-surface-variant: #595c5e;
+  --color-outline: #747779;
+  --color-outline-variant: #abadaf;
+  
+  --color-error: #b41340;
+  --color-error-dim: #a70138;
+  --color-error-container: #f74b6d;
+  --color-on-error-container: #510017;
+  
+  --color-background: #f5f7f9;
+  --color-on-background: #2c2f31;
+
+  --font-headline: "Manrope", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-label: "Inter", sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-surface font-body text-on-surface antialiased overflow-hidden;
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

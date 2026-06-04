@@ -1,0 +1,18 @@
+[project]
+name = "bishe-interview-live"
+version = "0.1.0"
+description = "Gemini Live websocket bridge for the bishe AI interview page."
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.116.0,<1.0.0",
+  "google-genai>=1.18.0,<2.0.0",
+  "python-dotenv>=1.0.1,<2.0.0",
+  "uvicorn[standard]>=0.34.0,<1.0.0",
+]
+
+[build-system]
+requires = ["setuptools>=69.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}

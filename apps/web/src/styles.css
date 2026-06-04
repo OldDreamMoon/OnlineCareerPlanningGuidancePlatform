@@ -1,0 +1,182 @@
+@import "tailwindcss";
+@theme {
+  --color-primary: #4647d3;
+  --color-primary-dim: #3939c7;
+  --color-primary-container: #9396ff;
+  --color-on-primary-container: #0a0081;
+  --color-secondary: #006947;
+  --color-secondary-dim: #005c3d;
+  --color-secondary-container: #69f6b8;
+  --color-on-secondary-container: #005a3c;
+  --color-tertiary: #815100;
+  --color-tertiary-dim: #714600;
+  --color-tertiary-container: #f8a010;
+  --color-on-tertiary-container: #4a2c00;
+  
+  --color-surface: #f5f7f9;
+  --color-surface-dim: #d0d5d8;
+  --color-surface-bright: #f5f7f9;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #eef1f3;
+  --color-surface-container: #e5e9eb;
+  --color-surface-container-high: #dfe3e6;
+  --color-surface-container-highest: #d9dde0;
+  
+  --color-on-surface: #2c2f31;
+  --color-on-surface-variant: #595c5e;
+  --color-outline: #747779;
+  --color-outline-variant: #abadaf;
+  
+  --color-error: #b41340;
+  --color-error-dim: #a70138;
+  --color-error-container: #f74b6d;
+  --color-on-error-container: #510017;
+  
+  --color-background: #f5f7f9;
+  --color-on-background: #2c2f31;
+
+  --font-headline: "Manrope", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-label: "Inter", sans-serif;
+}
+
+
+html {
+  scrollbar-gutter: stable;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  overflow-x: hidden;
+  background: #eef3ff;
+  color: #0f172a;
+}
+
+.landing-small-text {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.page-top-glow {
+  pointer-events: none;
+  position: absolute;
+  left: 50%;
+  top: -14rem;
+  width: min(170rem, 150vw);
+  height: 38rem;
+  transform: translateX(-50%);
+  border-radius: 9999px;
+  background: radial-gradient(
+    ellipse at center,
+    var(--page-top-glow-core, rgba(79, 70, 229, 0.2)) 0%,
+    var(--page-top-glow-mid, rgba(79, 70, 229, 0.08)) 38%,
+    transparent 74%
+  );
+}
+
+.page-top-glow--indigo {
+  --page-top-glow-core: rgba(79, 70, 229, 0.22);
+  --page-top-glow-mid: rgba(79, 70, 229, 0.1);
+}
+
+.page-top-glow--indigo-soft {
+  --page-top-glow-core: rgba(79, 70, 229, 0.16);
+  --page-top-glow-mid: rgba(79, 70, 229, 0.07);
+}
+
+.page-top-glow--violet {
+  --page-top-glow-core: rgba(99, 102, 241, 0.22);
+  --page-top-glow-mid: rgba(99, 102, 241, 0.1);
+}
+
+.page-top-glow--violet-soft {
+  --page-top-glow-core: rgba(99, 102, 241, 0.16);
+  --page-top-glow-mid: rgba(99, 102, 241, 0.07);
+}
+
+.page-top-glow--slate {
+  --page-top-glow-core: rgba(51, 65, 85, 0.14);
+  --page-top-glow-mid: rgba(51, 65, 85, 0.06);
+}
+
+.page-top-glow--emerald {
+  --page-top-glow-core: rgba(4, 120, 87, 0.13);
+  --page-top-glow-mid: rgba(4, 120, 87, 0.05);
+}
+
+.page-top-glow--sky {
+  --page-top-glow-core: rgba(56, 189, 248, 0.12);
+  --page-top-glow-mid: rgba(56, 189, 248, 0.05);
+}
+
+.page-enter-float {
+  will-change: transform, opacity;
+}
+
+@keyframes page-enter-float {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .page-enter-float {
+    animation: page-enter-float 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter-float {
+    animation: none;
+  }
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a[href],
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]),
+[role="tab"]:not([aria-disabled="true"]),
+summary,
+select:not(:disabled),
+input[type="button"]:not(:disabled),
+input[type="submit"]:not(:disabled),
+input[type="reset"]:not(:disabled) {
+  cursor: pointer;
+}
+
+button:disabled,
+[role="button"][aria-disabled="true"],
+[role="tab"][aria-disabled="true"],
+select:disabled,
+input[type="button"]:disabled,
+input[type="submit"]:disabled,
+input[type="reset"]:disabled {
+  cursor: not-allowed;
+}

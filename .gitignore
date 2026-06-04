@@ -1,0 +1,60 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+apps/web/.env
+apps/server-java/.env
+infra/docker/.env*.prod
+
+# Node
+node_modules/
+dist/
+*.tsbuildinfo
+.cache/
+.cache/pids/
+
+# Java
+*.class
+target/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.venv.bak.*/
+
+# Logs
+*.log
+logs/
+
+# IDE
+.vscode/
+.idea/
+
+# Data runtime
+/data/uploads/**
+!/data/uploads/.gitkeep
+
+# MinIO/MySQL local data
+infra/docker/mysql_data/
+infra/docker/redis_data/
+infra/docker/minio_data/
+
+# KEY
+apps/server-java/KEY/
+
+# EXAMPLE
+apps/server-java/examples/
+apps/web/templates/
+
+# Thesis writing literature files
+docs/thesis_writing/literature/*.pdf
+docs/thesis_writing/literature_temp/*.pdf
+
+# Thesis local working artifacts
+docs/thesis_reference/svg_exports/
+docs/thesis_writing/drafts_temp/
+docs/thesis_writing/aigc_reports/检测结果-无格式初稿*.pdf

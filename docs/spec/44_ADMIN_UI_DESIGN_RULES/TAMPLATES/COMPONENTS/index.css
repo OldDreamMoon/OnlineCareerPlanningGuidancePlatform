@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+@theme {
+  /* Luminous Prism Palette - Soft, Colorful, Macaron (Adjusted Saturation) */
+  --color-primary: #60A5FA;
+  --color-primary-dim: #3B82F6;
+  --color-primary-container: #EFF6FF;
+  --color-on-primary-container: #1E40AF;
+  --color-on-primary: #FFFFFF;
+
+  --color-secondary: #10B981;
+  --color-secondary-dim: #059669;
+  --color-secondary-fixed: #34D399;
+  --color-secondary-container: #D1FAE5;
+  --color-on-secondary-container: #065F46;
+
+  --color-tertiary: #F59E0B;
+  --color-tertiary-dim: #D97706;
+  --color-tertiary-fixed: #FBBF24;
+  --color-tertiary-container: #FEF3C7;
+  --color-on-tertiary-container: #92400E;
+
+  --color-error: #F43F5E;
+  --color-error-dim: #E11D48;
+  --color-error-container: #FFE4E6;
+  --color-on-error-container: #9F1239;
+
+  --color-surface: #F8FAFC;
+  --color-surface-bright: #FFFFFF;
+  --color-surface-container-lowest: #FFFFFF;
+  --color-surface-container-low: #F1F5F9;
+  --color-surface-container: #E2E8F0;
+  --color-surface-container-high: #CBD5E1;
+  --color-surface-container-highest: #94A3B8;
+
+  --color-on-surface: #334155;
+  --color-on-surface-variant: #64748B;
+  --color-outline: #94A3B8;
+  --color-outline-variant: #E2E8F0;
+
+  --radius-DEFAULT: 12px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  --font-headline: "Manrope", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-label: "Inter", sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-on-surface);
+  }
+}
+
+.material-symbols-outlined {
+  font-size: 20px;
+  vertical-align: middle;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(24px);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
